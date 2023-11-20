@@ -46,26 +46,25 @@ class Travel(object):
                         travelmates.append(x.get("name"))
         return travelmates
 
-    # DEPRECATED
-    def get_list_old(self, name):
+    def get_list_route(self, name):
         travelmates = []
-
-        # Get all documents in the 'travel' collection
-        travel_documents = self.db.collection('travel').stream()
+        departure = ""
+        arrive = ""
+        # forse il .get() lo devi fare fuori dai costrutti if e for ???
+        travel_documents = self.db.collection('travel').get()
 
         for doc in travel_documents:
-            # Check if the provided name is in the document's name field
-            if name.lower() in doc.to_dict()['name'].lower():
-                t = doc.to_dict()
-
-                # Find other travelmates with the same date, departure, and arrive
+            if name.lower() in doc.get("name"):
                 for x in travel_documents:
-                    x_data = x.to_dict()
+                    data1 = datetime.strptime(x.get("date"), "%Y-%m-%d")
+                    data2 = datetime.strptime(doc.get("date"), "%Y-%m-%d")
+                    diff = data1-data2
                     if (
-                            x_data['date'] == t['date']
-                            and x_data['departure'] == t['departure']
-                            and x_data['arrive'] == t['arrive']
-                    ):
-                        travelmates.append(x_data['name'])
-
+                            (data1 == data2 or abs(diff.days) <= 1)
+                            and x.get("departure") == doc.get("departure")
+                            and x.get("arrive") == doc.get("arrive")):
+                        departure = x.get("departure")
+                        arrive = x.get("arrive")
+        travelmates.append(departure)
+        travelmates.append(arrive)
         return travelmates

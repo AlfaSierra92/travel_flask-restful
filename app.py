@@ -1,10 +1,12 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_restful import Resource, Api
 # from travel_local import Travel
 from travel_gcloud import Travel
 import datetime
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='/static',
+            static_folder='static')
 travel_dao = Travel()
 
 api = Api(app)
@@ -64,6 +66,16 @@ api.add_resource(TravelResoure, f'{basePath}/travel/<string:user>/<string:data>'
 @app.route('/')
 def hello_world():  # put application's code here
     return 'Hello World!'
+
+
+@app.route('/travel/<user>')
+def get_travelmates(user):
+    if user != "":
+        travelmates = travel_dao.get_list(user)
+        route = travel_dao.get_list_route(user)
+        return render_template("mates.html", route=route, travelmates=travelmates)
+    else:
+        return None, 404
 
 
 if __name__ == '__main__':

@@ -20,3 +20,5 @@ venv/
 /setup.cfg
 credentials.json
 *.http
+readme.md
+exam_travel.pdf
