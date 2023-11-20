@@ -18,3 +18,5 @@ __pycache__/
 venv/
 # Ignored by the build system
 /setup.cfg
+credentials.json
+*.http
